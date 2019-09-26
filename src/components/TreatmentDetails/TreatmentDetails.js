@@ -117,6 +117,61 @@ class TreatmentDetails extends Component {
         }
       }
     ];
+
+    const DietColumns = [
+      {
+        title: "Recommended Food",
+        dataIndex: "food",
+        key: "food"
+      },
+      {
+        title: "Doctor's Recommendation",
+        dataIndex: "recommendation",
+        align: 'center',
+        key: "recommendation",
+        render: x => {
+          if(x === "recommended") {
+            return (<AntIcon
+              type="check-circle"
+              theme="twoTone"
+              twoToneColor="#52c41a"
+              style={{ margin: "0 auto" }}
+            />)
+          } else {
+            return (<AntIcon
+              type="close-circle"
+              theme="twoTone"
+              twoToneColor="#eb2f96"
+              style={{ margin: "0 auto" }}
+            />)
+          }
+        }
+      }
+    ]
+
+    let diets, new_diets, key = 1;
+    if(this.props.treatment && this.props.treatment.mustEat) {
+      diets = this.props.treatment.mustEat.map((item, index) => {
+        key = key + 1;
+        return {
+          key: key,
+          food: item.name,
+          recommendation: "recommended"
+        }
+      })
+    }
+
+    if (this.props.treatment && this.props.treatment.mustNotEat) {
+      new_diets = this.props.treatment.mustNotEat.map((item, index) => {
+        key = key + 1;
+        return {
+          key: key,
+          food: item.name,
+          recommendation: "not-recommended"
+        }
+      })
+    }
+
     let dataSource;
     if (this.props.treatment && this.props.treatment.meds) {
       dataSource = this.props.treatment.meds.map((med, index) => {
@@ -249,8 +304,32 @@ class TreatmentDetails extends Component {
             />
           </div>
         ) : null}
-        {this.props.treatment && this.props.treatment.diet ? (
+
+        {this.props.treatment && this.props.treatment.mustEat ?
           <div className="body">
+            <Table
+              dataSource={[...diets, ...new_diets]}
+              columns={DietColumns}
+              pagination={false}
+              style={{ width: "100%" }}
+            />
+          </div>
+         : null}
+
+        {/* {this.props.treatment && this.props.treatment.mustNotEat ?
+          <div className="body">
+            <Table
+              dataSource={mustNotEat}
+              columns={MustNotEatDietColumns}
+              pagination={false}
+              showHeader={false}
+              style={{ width: "100%" }}
+            />
+          </div>
+        : null} */}
+
+        {this.props.treatment && this.props.treatment.diet ? (
+          <div>
             <div className="body-desc" style={{ width: "100%" }}>
               <div>Diet Description: </div>
               <hr></hr>

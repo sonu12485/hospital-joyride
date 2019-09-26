@@ -29,3 +29,7 @@ div.app {
 .nav-link {
   color: white !important;
 }
+
+.ant-table-column-title {
+  font-weight: 700 !important
+}

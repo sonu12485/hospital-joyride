@@ -18,7 +18,8 @@ import {
   Button,
   Message,
   Form,
-  Input
+  Input,
+  Label
 } from "semantic-ui-react";
 import { Icon as AntIcon, Table, Switch } from "antd";
 
@@ -30,7 +31,11 @@ class UpcomingAppointments extends Component {
       disease: "",
       diet: "",
       numberOfMeds: 0,
-      meds: []
+      meds: [],
+      numberOfMustEat: 0,
+      mustEat: [],
+      numberOfMustNotEat: 0,
+      mustNotEat: []
     };
   }
 
@@ -49,6 +54,30 @@ class UpcomingAppointments extends Component {
       ]
     });
   };
+
+  addnewMustEat = () => {
+    this.setState({
+      numberOfMustEat: this.state.numberOfMustEat + 1,
+      mustEat: [
+        ...this.state.mustEat,
+        {
+          name: ""
+        }
+      ]
+    })
+  }
+
+  addnewMustNotEat = () => {
+    this.setState({
+      numberOfMustNotEat: this.state.numberOfMustNotEat + 1,
+      mustNotEat: [
+        ...this.state.mustNotEat,
+        {
+          name: ""
+        }
+      ]
+    })
+  }
 
   componentDidUpdate() {
     if (!this.state.doctor) {
@@ -209,6 +238,100 @@ class UpcomingAppointments extends Component {
       );
     }
     return medicines;
+  };
+
+  renderMustEatForm = () => {
+    let diet = [];
+    for (let i = 0; i < this.state.numberOfMustEat; i++) {
+      diet.push(
+        <Form.Field inline style={{ marginTop: "10px" }}>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "flex-start",
+              flexWrap: "wrap"
+            }}
+          >
+            <div>
+              <Label>{i+1}</Label>
+              <Input
+                style={{
+                  padding: "5px"
+                }}
+                placeholder="Recommended Food"
+                name="name"
+                value={this.state.mustEat[i] ? this.state.mustEat[i].name : null}
+                onChange={e => {
+                  const newDiet = this.state.mustEat.map((diet, index) => {
+                    if (index === i) {
+                      return {
+                        ...diet,
+                        name: e.target.value
+                      };
+                    } else {
+                      return diet;
+                    }
+                  });
+
+                  this.setState({
+                    mustEat: newDiet
+                  });
+                }}
+              />
+            </div>
+          </div>
+        </Form.Field>
+      );
+    }
+    return diet;
+  };
+
+  renderMustNotEatForm = () => {
+    let diet = [];
+    for (let i = 0; i < this.state.numberOfMustNotEat; i++) {
+      diet.push(
+        <Form.Field inline style={{ marginTop: "10px" }}>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "flex-start",
+              flexWrap: "wrap"
+            }}
+          >
+            <div>
+              <Label>{i + 1}</Label>
+              <Input
+                style={{
+                  padding: "5px"
+                }}
+                placeholder="Food To Be Avoided"
+                name="name"
+                value={this.state.mustNotEat[i] ? this.state.mustNotEat[i].name : null}
+                onChange={e => {
+                  const newDiet = this.state.mustNotEat.map((diet, index) => {
+                    if (index === i) {
+                      return {
+                        ...diet,
+                        name: e.target.value
+                      };
+                    } else {
+                      return diet;
+                    }
+                  });
+
+                  this.setState({
+                    mustNotEat: newDiet
+                  });
+                }}
+              />
+            </div>
+          </div>
+        </Form.Field>
+      );
+    }
+    return diet;
   };
 
   handleChange = e => {
@@ -472,33 +595,152 @@ class UpcomingAppointments extends Component {
               {this.props.treatment && this.props.treatment.meds ? (
                 this.props.treatment.meds.length === 0 && (
                   <Form.Field>
-                    <label style={{ padding: "0.5rem", fontSize: "18px" }}>
-                      Enter Medicines :
-                      <Button
-                        icon
-                        onClick={this.addNewMedicine}
-                        style={{ margin: "0.5rem" }}
-                      >
-                        <Icon name="add" />
-                      </Button>
-                    </label>
+                    <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
+                      <div style={{ padding: "0.5rem", fontSize: "18px" }}>
+                        <label>
+                          <h3>
+                            Enter Medicines :
+                        </h3>
+                        </label>
+                      </div>
+
+                      <div>
+                        <Button
+                          icon
+                          onClick={this.addNewMedicine}
+                          style={{ marginLeft: "auto" }}
+                        >
+                          <Icon name="add" />
+                        </Button>
+                      </div>
+                    </div>
                   </Form.Field>
                 )
               ) : (
                 <Form.Field>
-                  <label style={{ padding: "0.5rem", fontSize: "18px" }}>
-                    Enter Medicines :
+                  <div style={{display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
+                    <div style={{ padding: "0.5rem", fontSize: "18px" }}>
+                      <label>
+                        <h3>
+                          Enter Medicines :
+                        </h3>
+                      </label>
+                    </div>
+
+                    <div>
                     <Button
                       icon
                       onClick={this.addNewMedicine}
-                      style={{ margin: "0.5rem" }}
-                    >
+                      style={{ marginLeft: "auto" }}
+                      >
                       <Icon name="add" />
                     </Button>
-                  </label>
+                      </div>
+                  </div>
                 </Form.Field>
               )}
               {<div>{this.renderMedicineForm()}</div>}
+              <hr></hr>
+
+              {this.props.treatment && this.props.treatment.meds ? (
+                this.props.treatment.meds.length === 0 && (
+                  <Form.Field>
+                    <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
+                      <div style={{ padding: "0.5rem", fontSize: "18px" }}>
+                        <label>
+                          <h3>
+                            Enter Must Eat Food :
+                        </h3>
+                        </label>
+                      </div>
+
+                      <div>
+                        <Button
+                          icon
+                          onClick={this.addnewMustEat}
+                          style={{ marginLeft: "auto" }}
+                        >
+                          <Icon name="add" />
+                        </Button>
+                      </div>
+                    </div>
+                  </Form.Field>
+                )
+              ) : (
+                  <Form.Field>
+                    <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
+                      <div style={{ padding: "0.5rem", fontSize: "18px" }}>
+                        <label>
+                          <h3>
+                            Enter Must Eat Food :
+                        </h3>
+                        </label>
+                      </div>
+
+                      <div>
+                        <Button
+                          icon
+                          onClick={this.addnewMustEat}
+                          style={{ marginLeft: "auto" }}
+                        >
+                          <Icon name="add" />
+                        </Button>
+                      </div>
+                    </div>
+                  </Form.Field>
+                )}
+              {<div>{this.renderMustEatForm()}</div>}
+              <hr></hr>
+
+
+              {this.props.treatment && this.props.treatment.meds ? (
+                this.props.treatment.meds.length === 0 && (
+                  <Form.Field>
+                    <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
+                      <div style={{ padding: "0.5rem", fontSize: "18px" }}>
+                        <label>
+                          <h3>
+                            Enter Foods To Avoid :
+                        </h3>
+                        </label>
+                      </div>
+
+                      <div>
+                        <Button
+                          icon
+                          onClick={this.addnewMustNotEat}
+                          style={{ marginLeft: "auto" }}
+                        >
+                          <Icon name="add" />
+                        </Button>
+                      </div>
+                    </div>
+                  </Form.Field>
+                )
+              ) : (
+                  <Form.Field>
+                    <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
+                      <div style={{ padding: "0.5rem", fontSize: "18px" }}>
+                        <label>
+                          <h3>
+                            Enter Foods To Avoid :
+                        </h3>
+                        </label>
+                      </div>
+
+                      <div>
+                        <Button
+                          icon
+                          onClick={this.addnewMustNotEat}
+                          style={{ marginLeft: "auto" }}
+                        >
+                          <Icon name="add" />
+                        </Button>
+                      </div>
+                    </div>
+                  </Form.Field>
+                )}
+              {<div>{this.renderMustNotEatForm()}</div>}
 
               {(this.props.treatment && !this.props.treatment.disease) ||
               (this.props.treatment && !this.props.treatment.diet) ||
@@ -536,7 +778,9 @@ class UpcomingAppointments extends Component {
                             diet: this.state.diet,
                             meds,
                             isDiagnosed: true,
-                            storyPointer: "part_2_1"
+                            storyPointer: "part_2_1",
+                            mustEat: this.state.mustEat,
+                            mustNotEat: this.state.mustNotEat
                           });
 
                         this.props.history.push("/doctors");
